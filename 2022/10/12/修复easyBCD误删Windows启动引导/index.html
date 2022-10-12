@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="今天给朋友的电脑装Ubuntu双系统的时候不小心用easyBCD误删了Windows的启动引导项。再重启电脑发现能正常进入Ubuntu，但是进不了Windows了，尝试了很多方法进行修复，在这里记录一下过程。 制作Windows启动盘下载一个win10系统。磁力链接:(ed2k:&#x2F;&#x2F;%7Cfile%7Ccn_windows_10_multiple_editions_x64_dvd_6848463.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="修复easyBCD误删Windows启动引导">
+<meta property="og:url" content="http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/index.html">
+<meta property="og:site_name" content="Haiyu&#39;s space">
+<meta property="og:description" content="今天给朋友的电脑装Ubuntu双系统的时候不小心用easyBCD误删了Windows的启动引导项。再重启电脑发现能正常进入Ubuntu，但是进不了Windows了，尝试了很多方法进行修复，在这里记录一下过程。 制作Windows启动盘下载一个win10系统。磁力链接:(ed2k:&#x2F;&#x2F;%7Cfile%7Ccn_windows_10_multiple_editions_x64_dvd_6848463.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-10-12T15:17:52.000Z">
+<meta property="article:modified_time" content="2022-10-12T15:18:38.208Z">
+<meta property="article:author" content="Haiyu Zhang">
+<meta property="article:tag" content="系统">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>修复easyBCD误删Windows启动引导</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Haiyu's space" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About me</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2022/10/12/%E5%BF%AB%E9%80%9F%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2FFT/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2022/10/12/%E6%9A%B4%E5%8A%9B%E8%AE%A1%E7%AE%97%E4%BA%8C%E7%BB%B4DFT/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&text=修复easyBCD误删Windows启动引导"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&is_video=false&description=修复easyBCD误删Windows启动引导"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=修复easyBCD误删Windows启动引导&body=Check out this article: http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&name=修复easyBCD误删Windows启动引导&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&t=修复easyBCD误删Windows启动引导"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B6%E4%BD%9CWindows%E5%90%AF%E5%8A%A8%E7%9B%98"><span class="toc-number">1.</span> <span class="toc-text">制作Windows启动盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8DBCD"><span class="toc-number">2.</span> <span class="toc-text">修复BCD</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        修复easyBCD误删Windows启动引导
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Haiyu Zhang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-10-12T15:17:52.000Z" itemprop="datePublished">2022-10-12</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E7%B3%BB%E7%BB%9F/" rel="tag">系统</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>今天给朋友的电脑装Ubuntu双系统的时候不小心用easyBCD误删了Windows的启动引导项。再重启电脑发现能正常进入Ubuntu，但是进不了Windows了，尝试了很多方法进行修复，在这里记录一下过程。</p>
+<h3 id="制作Windows启动盘"><a href="#制作Windows启动盘" class="headerlink" title="制作Windows启动盘"></a>制作Windows启动盘</h3><p>下载一个win10系统。<br>磁力链接:(ed2k://%7Cfile%7Ccn_windows_10_multiple_editions_x64_dvd_6848463.iso%7C4303300608%7C94FD861E82458005A9CA8E617379856A%7C/)，大概要4、5个G，慢慢等。<br>然后用工具将下载好的镜像做成启动盘，我用的是<a target="_blank" rel="noopener" href="https://sourceforge.net/projects/win32diskimager/">Win32DiskImager</a><br>在电脑的BIOS里设置U盘启动(不同的电脑型号方法不同,这里不赘述)，进入制作好的启动盘。</p>
+<h3 id="修复BCD"><a href="#修复BCD" class="headerlink" title="修复BCD"></a>修复BCD</h3><p>进入安装界面,点击左下角下一步。<br>依次点击:“疑难解答”，“高级选项”，“命令提示符”。<br>接下来依次输入</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">diskpart <span class="comment">#选中磁盘,再输入list disk，找到电脑系统所在磁盘</span></span><br><span class="line">sel disk X <span class="comment">#选中刚刚自己发现的系统所在磁盘(X自己替换成数字)</span></span><br><span class="line">lis​​​​​​​t vol​​​​​​​ <span class="comment">#查看磁盘里各个盘符，并确定自己的win系统所在的盘符（通常为C盘)</span></span><br><span class="line">list par </span><br><span class="line">sel par <span class="number">1</span> </span><br><span class="line">assign letter=P</span><br><span class="line"><span class="keyword">exit</span> <span class="comment">#退出磁盘管理操作</span></span><br></pre></td></tr></table></figure>
+<p>最后输入</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bcdboot x:\windows /s P： /f uefi /l zh<span class="literal">-cn</span> </span><br><span class="line"><span class="comment">#盘符x:是你自己刚刚确定的盘符,最后的/l是小写的L,不是1</span></span><br></pre></td></tr></table></figure>
+<p>如果提示创建文件成功，就说明修复完成了,关掉代码界面选择”退出并继续windows10”，至此完成修复。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About me</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B6%E4%BD%9CWindows%E5%90%AF%E5%8A%A8%E7%9B%98"><span class="toc-number">1.</span> <span class="toc-text">制作Windows启动盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8DBCD"><span class="toc-number">2.</span> <span class="toc-text">修复BCD</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&text=修复easyBCD误删Windows启动引导"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&is_video=false&description=修复easyBCD误删Windows启动引导"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=修复easyBCD误删Windows启动引导&body=Check out this article: http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&title=修复easyBCD误删Windows启动引导"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&name=修复easyBCD误删Windows启动引导&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://haiyu-haiyuzhang.github.io/2022/10/12/%E4%BF%AE%E5%A4%8DeasyBCD%E8%AF%AF%E5%88%A0Windows%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/&t=修复easyBCD误删Windows启动引导"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Haiyu Zhang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About me</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

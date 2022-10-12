@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="使用两次一维DFT的叠加方式实现二维的DFT运算可以有效的减少计算成本。 一维DFT公式  X[k]&#x3D;\sum_{n&#x3D;0}^{N-1}x[n]e^{-j\frac{2\pi}{N}kn}将DFT转化为矩阵运算在MATLAB中，使用矩阵运算比循环更加有效率。下面展示对每一行的处理：（以256x256大小图片举例）对第i行进行DFT处理，则第i行第一个元素的卷积为：$x[i,1]e^{-j\frac{">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用一维DFT叠加实现对图片二维傅立叶变换">
+<meta property="og:url" content="http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/index.html">
+<meta property="og:site_name" content="Haiyu&#39;s space">
+<meta property="og:description" content="使用两次一维DFT的叠加方式实现二维的DFT运算可以有效的减少计算成本。 一维DFT公式  X[k]&#x3D;\sum_{n&#x3D;0}^{N-1}x[n]e^{-j\frac{2\pi}{N}kn}将DFT转化为矩阵运算在MATLAB中，使用矩阵运算比循环更加有效率。下面展示对每一行的处理：（以256x256大小图片举例）对第i行进行DFT处理，则第i行第一个元素的卷积为：$x[i,1]e^{-j\frac{">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200227081919736.png#pic_center?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzk2NjAwOA==,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2020-03-01T14:55:33.000Z">
+<meta property="article:modified_time" content="2022-10-12T15:43:26.668Z">
+<meta property="article:author" content="Haiyu Zhang">
+<meta property="article:tag" content="图像处理">
+<meta property="article:tag" content="MATLAB">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200227081919736.png#pic_center?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzk2NjAwOA==,size_16,color_FFFFFF,t_70">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>使用一维DFT叠加实现对图片二维傅立叶变换</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Haiyu's space" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About me</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2022/10/09/hello-world/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&text=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&is_video=false&description=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用一维DFT叠加实现对图片二维傅立叶变换&body=Check out this article: http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&name=使用一维DFT叠加实现对图片二维傅立叶变换&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&t=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86DFT%E8%BD%AC%E5%8C%96%E4%B8%BA%E7%9F%A9%E9%98%B5%E8%BF%90%E7%AE%97"><span class="toc-number">1.</span> <span class="toc-text">将DFT转化为矩阵运算</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MATLAB%E4%BB%A3%E7%A0%81"><span class="toc-number"></span> <span class="toc-text">MATLAB代码</span></a>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        使用一维DFT叠加实现对图片二维傅立叶变换
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Haiyu Zhang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-03-01T14:55:33.000Z" itemprop="datePublished">2020-03-01</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/MATLAB/" rel="tag">MATLAB</a>, <a class="tag-link-link" href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" rel="tag">图像处理</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>使用两次一维DFT的叠加方式实现二维的DFT运算可以有效的减少计算成本。</p>
+<p>一维DFT公式</p>
+<script type="math/tex; mode=display">
+X[k]=\sum_{n=0}^{N-1}x[n]e^{-j\frac{2\pi}{N}kn}</script><h3 id="将DFT转化为矩阵运算"><a href="#将DFT转化为矩阵运算" class="headerlink" title="将DFT转化为矩阵运算"></a>将DFT转化为矩阵运算</h3><p>在MATLAB中，使用矩阵运算比循环更加有效率。下面展示对每一行的处理：（以256x256大小图片举例）<br>对第i行进行DFT处理，则第i行第一个元素的卷积为：<br>$x[i,1]e^{-j\frac{2\pi}{N}0<em>0}+x[i,1]e^{-j\frac{2\pi}{N}0</em>1}+…+x[i,1]e^{-j\frac{2\pi}{N}0*255}$<br>所以将每行的每个元素都进行此运算之后得到：</p>
+<script type="math/tex; mode=display">X[i，1]=x[i,1]e^{-j\frac{2\pi}{N}0*0}+x[i,1]e^{-j\frac{2\pi}{N}0*1}+...+x[i,1]e^{-j\frac{2\pi}{N}0*255}\\
+X[i，2]=x[i,2]e^{-j\frac{2\pi}{N}1*0}+x[i,2]e^{-j\frac{2\pi}{N}1*1}+...+x[i,2]e^{-j\frac{2\pi}{N}1*2}\\
+...\\...\\
+X[i，256]=x[i,256]e^{-j\frac{2\pi}{N}255*0}+x[i,256]e^{-j\frac{2\pi}{N}255*1}+...+x[i,256]e^{-j\frac{2\pi}{N}255*255}</script><p>所以对于图像每一行组成的行向量，指数部分就是：<br>第1个元素：$0<em>0+0</em>1+…+0<em>255$<br>第256个元素：$255</em>0+255<em>1+…+255</em>255$<br>这种加法刚好就构成了一个向量和一个矩阵的乘法过程。</p>
+<p>我们构建一个由0到255的列向量和0到255的行向量相乘得到的255x255大小的矩阵。姑且叫做EMatrix。</p>
+<script type="math/tex; mode=display">
+e^{-j\frac{2\pi}{N}}\begin{bmatrix}
+0\\ 
+...\\ 
+255
+\end{bmatrix}
+*\begin{bmatrix}
+0 & ... & 255
+\end{bmatrix}=e^{-j\frac{2\pi}{N}}\begin{bmatrix}
+ 0*0& 0*1 & ... &0*255\\ 
+ ...&  ...&  ...& ...\\ 
+ ...&  ...&  ...& ...\\ 
+ 255*0&  ...&  ...&255*255 
+\end{bmatrix}</script><p>所以对于图片的每一行，第一个元素会对应乘上矩阵的第一行的每个元素并相加，得到对应的第一元素的X[k]，将每一行都乘以这个矩阵就可以得到对图片进行行处理的结果。</p>
+<script type="math/tex; mode=display">
+X[i,:]=x[i,:]*EMatrix=\begin{bmatrix}
+x[i,1] & ... & ... & x[i,256]
+\end{bmatrix}*
+e^{-j\frac{2\pi}{N}}\begin{bmatrix}
+ 0*0& 0*1 & ... &0*255\\ 
+ ...&  ...&  ...& ...\\ 
+ ...&  ...&  ...& ...\\ 
+ 255*0&  ...&  ...&255*255 
+\end{bmatrix}</script><p>下一步就是对图片的每一列进行相同的步骤，不过注意列向量拿出来之后需要转置再乘EMatrix再转置得到对应列的结果。</p>
+<h2 id="MATLAB代码"><a href="#MATLAB代码" class="headerlink" title="MATLAB代码"></a>MATLAB代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">%% Q2 <span class="number">1</span>D-DFT</span><br><span class="line">raw_image=imread(<span class="string">&#x27;hh.jpg&#x27;</span>); % read image</span><br><span class="line">image=im2double(rgb2gray(raw_image));</span><br><span class="line">[M,N]=size(image);</span><br><span class="line">one_d1=zeros(M,N); % x-dimention</span><br><span class="line">one_d2=zeros(M,N);% y-dimention</span><br><span class="line">k=<span class="number">0</span>:<span class="number">1</span>:<span class="number">255</span>; </span><br><span class="line">n=<span class="number">0</span>:<span class="number">1</span>:<span class="number">255</span>;</span><br><span class="line">kn=k<span class="number">&#x27;</span>*n; % get <span class="built_in">exp</span> kernel</span><br><span class="line">E=<span class="built_in">exp</span>(<span class="number">-1</span>i*<span class="number">2</span>*pi/<span class="number">256</span>).^(kn);</span><br><span class="line">tic % start counting</span><br><span class="line"><span class="keyword">for</span> a=<span class="number">1</span>:M % <span class="keyword">for</span> every row</span><br><span class="line">    one_d1(a,:)=image(a,:)*E;</span><br><span class="line">end</span><br><span class="line"><span class="keyword">for</span> b=<span class="number">1</span>:N % <span class="keyword">for</span> every column</span><br><span class="line">    one_d2(:,b)=(one_d1(:,b)<span class="string">&#x27;*E)&#x27;</span>;</span><br><span class="line">end</span><br><span class="line">toc % stop counting</span><br><span class="line">subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>),imshow(raw_image),title(<span class="string">&#x27;raw&#x27;</span>);</span><br><span class="line">subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>),imshow(one_d2),title(<span class="string">&#x27;1D-DFT&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>用我最喜欢的憨憨龟来测试一下</p>
+<p><img src="https://img-blog.csdnimg.cn/20200227081919736.png#pic_center?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzk2NjAwOA==,size_16,color_FFFFFF,t_70" alt="憨憨"></p>
+<p>用时0.014302秒，相比于直接用公式计算2D的DFT要快非常多。</p>
+<p>提到傅里叶变换就不得不提到<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43966008/article/details/104585595">快速傅里叶变换FFT</a>，在我下一篇文章里有介绍。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About me</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86DFT%E8%BD%AC%E5%8C%96%E4%B8%BA%E7%9F%A9%E9%98%B5%E8%BF%90%E7%AE%97"><span class="toc-number">1.</span> <span class="toc-text">将DFT转化为矩阵运算</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MATLAB%E4%BB%A3%E7%A0%81"><span class="toc-number"></span> <span class="toc-text">MATLAB代码</span></a>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&text=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&is_video=false&description=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用一维DFT叠加实现对图片二维傅立叶变换&body=Check out this article: http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&title=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&name=使用一维DFT叠加实现对图片二维傅立叶变换&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://haiyu-haiyuzhang.github.io/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/&t=使用一维DFT叠加实现对图片二维傅立叶变换"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Haiyu Zhang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About me</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

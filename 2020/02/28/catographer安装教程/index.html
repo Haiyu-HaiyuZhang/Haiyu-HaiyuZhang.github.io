@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="cartographer的安装与配置参照cartographer官方手册 按照cartographer的官方手册是完成不了cartographer安装的，主要是其中的ceres库无法下载（原因很简单。。大家都知道一些著名网站在大陆是不存在的）。在这里特地整理了一下安装步骤：先安装依赖：12sudo apt-get updatesudo apt-get install -y google-mock">
+<meta property="og:type" content="article">
+<meta property="og:title" content="catographer安装教程">
+<meta property="og:url" content="http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Haiyu&#39;s space">
+<meta property="og:description" content="cartographer的安装与配置参照cartographer官方手册 按照cartographer的官方手册是完成不了cartographer安装的，主要是其中的ceres库无法下载（原因很简单。。大家都知道一些著名网站在大陆是不存在的）。在这里特地整理了一下安装步骤：先安装依赖：12sudo apt-get updatesudo apt-get install -y google-mock">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-02-28T14:43:57.000Z">
+<meta property="article:modified_time" content="2022-10-12T15:43:09.984Z">
+<meta property="article:author" content="Haiyu Zhang">
+<meta property="article:tag" content="教程">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>catographer安装教程</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Haiyu's space" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About me</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020/03/01/%E4%BD%BF%E7%94%A8%E4%B8%80%E7%BB%B4DFT%E5%8F%A0%E5%8A%A0%E5%AE%9E%E7%8E%B0%E5%AF%B9%E5%9B%BE%E7%89%87%E4%BA%8C%E7%BB%B4%E5%82%85%E7%AB%8B%E5%8F%B6%E5%8F%98%E6%8D%A2/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&text=catographer安装教程"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&is_video=false&description=catographer安装教程"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=catographer安装教程&body=Check out this article: http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&name=catographer安装教程&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&t=catographer安装教程"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#cartographer%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">cartographer的安装与配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%BF%E7%9C%9Fdemo%E6%B5%8B%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">仿真demo测试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9E%AF%E7%87%A5%E6%97%A0%E5%91%B3%E7%9A%84%E7%AE%97%E6%B3%95%E8%BF%90%E8%A1%8C%E8%A7%86%E9%A2%91"><span class="toc-number">3.</span> <span class="toc-text">枯燥无味的算法运行视频</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        catographer安装教程
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Haiyu Zhang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-02-28T14:43:57.000Z" itemprop="datePublished">2020-02-28</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E6%95%99%E7%A8%8B/" rel="tag">教程</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="cartographer的安装与配置"><a href="#cartographer的安装与配置" class="headerlink" title="cartographer的安装与配置"></a>cartographer的安装与配置</h1><p>参照<a target="_blank" rel="noopener" href="https://google-cartographer-ros.readthedocs.io/en/latest/index.html">cartographer官方手册</a></p>
+<p>按照cartographer的官方手册是完成不了cartographer安装的，主要是其中的ceres库无法下载（原因很简单。。大家都知道一些著名网站在大陆是不存在的）。在这里特地整理了一下安装步骤：<br>先安装依赖：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y google-mock libboost-all-dev  libeigen3-dev libgflags-dev libgoogle-glog-dev liblua5.2-dev libprotobuf-dev  libsuitesparse-dev libwebp-dev ninja-build protobuf-compiler python-sphinx  ros-kinetic-tf2-eigen libatlas-base-dev libsuitesparse-dev liblapack-dev</span><br></pre></td></tr></table></figure><br>按照官方手册前几步：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y python-wstool python-rosdep ninja-build</span><br></pre></td></tr></table></figure><br>接着创建工作空间，注意不要和已有的工作空间重名，否则后面会出现bash文件无法找到路径的情况。这里创建空间名为cartograph_ws。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir cartograph_ws</span><br><span class="line">cd cartograph_ws</span><br><span class="line">wstool init src</span><br><span class="line">wstool merge -t src https://raw.githubusercontent.com/googlecartographer/cartographer_ros/master/cartographer_ros.rosinstall</span><br><span class="line">wstool update -t src</span><br></pre></td></tr></table></figure><br>到了这一个wstool update -t src 的时候不出意外会报错：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fatal: unable to access &#x27;https://ceres-solver.googlesource.com/ceres-solver.git/&#x27;: Failed to connect to ceres-solver.googlesource.com</span><br><span class="line">port 443: 连接超时</span><br><span class="line">Exception caught during install: Error processing &#x27;ceres-solver&#x27; : [ceres-solver] Checkout of https://ceres-solver.googlesource.com/ceres       -solver.git version 1.12.0rc4 into /home/jack/catkin_ws/src/ceres-solver failed.</span><br></pre></td></tr></table></figure><br>这个时候打开src文件夹会发现已经下载好了cartographer和cartographer_ros，就差ceres库。</p>
+<p>输入以下指令用第三方资源下载解决：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/ceres-solver/ceres-solver</span><br></pre></td></tr></table></figure><br>看一下文件夹，保证下载的ceres-solver在src文件夹中。<br>然后继续按照官方手册步骤：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">src/cartographer/scripts/install_proto3.sh</span><br><span class="line">sudo rosdep init</span><br><span class="line">rosdep update </span><br><span class="line">rosdep install --from-paths src --ignore-src --rosdistro=$&#123;ROS_DISTRO&#125; -y</span><br><span class="line">catkin_make_isolated --install –use-ninja</span><br><span class="line">source install_isolated/setup.bash</span><br></pre></td></tr></table></figure><br>至此cartographer安装完成。</p>
+<h1 id="仿真demo测试"><a href="#仿真demo测试" class="headerlink" title="仿真demo测试"></a>仿真demo测试</h1><p>首先下载cartographer的2D地图测试包,随便下载一个2D 的就行（跑官方demo完整运行时间一般为半个小时到1个小时之间）：<a target="_blank" rel="noopener" href="https://www.ncnynl.com/archives/201810/2783.html">这里</a>有一些2D测试包</p>
+<p>仿真测试之前，如果你之前对PC和turtlebot进行过联机的话，需要将之前在bashrc文件里用来ssh远程登录的语句注释掉，再source一下bash文件。</p>
+<p>进行仿真测试：启动demo演示，顺利的话就可以看到rviz启动并开始建图：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">roslaunch cartographer_ros demo_backpack_2d.launch  bag_filename:=路径/XXXX.bag</span><br></pre></td></tr></table></figure><br>上面的语句为<code>roslaunch+XXXX.launch+bag_filename:=路径/XXXX.bag</code>具体的launch文件可以自己写，这里不多做介绍。<br>官方提供了很多写好的launch文件，路径为：<code>cartographer_ws/src/cartographer_ros/cartographer_ros/launch/</code><br>保存地图，结束测试。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rosrun map_server map_saver -f ’file’</span><br></pre></td></tr></table></figure></p>
+<h1 id="枯燥无味的算法运行视频"><a href="#枯燥无味的算法运行视频" class="headerlink" title="枯燥无味的算法运行视频"></a>枯燥无味的算法运行视频</h1><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv3103182">av40133675</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About me</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#cartographer%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">cartographer的安装与配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%BF%E7%9C%9Fdemo%E6%B5%8B%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">仿真demo测试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9E%AF%E7%87%A5%E6%97%A0%E5%91%B3%E7%9A%84%E7%AE%97%E6%B3%95%E8%BF%90%E8%A1%8C%E8%A7%86%E9%A2%91"><span class="toc-number">3.</span> <span class="toc-text">枯燥无味的算法运行视频</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&text=catographer安装教程"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&is_video=false&description=catographer安装教程"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=catographer安装教程&body=Check out this article: http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&title=catographer安装教程"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&name=catographer安装教程&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://haiyu-haiyuzhang.github.io/2020/02/28/catographer%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/&t=catographer安装教程"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Haiyu Zhang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About me</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Articles</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
