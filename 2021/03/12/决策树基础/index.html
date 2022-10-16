@@ -172,9 +172,9 @@
 
   <div class="content" itemprop="articleBody">
     <h1 id="决策树"><a href="#决策树" class="headerlink" title="决策树"></a>决策树</h1><p>决策树大家应该都见过，直观一点就长下面这样，由根，叶，节点等等组成。</p>
-<p><img src="https://img-blog.csdnimg.cn/20200521060617462.png"  width="50%"></p>
+<p><img src="https://img-blog.csdnimg.cn/20200521060617462.png" width="50%"></p>
 <p>其实一个决策树就是对特征值空间进行了划分。假如使用x1和x2特征进行分类，使用分割值$\theta_1$到$\theta_4$进行分割，实际上就是把空间分成了ABCDE，如左图所示。</p>
-<p><img src="https://img-blog.csdnimg.cn/20200521061022685.png"  width="80%"></p>
+<p><img src="https://img-blog.csdnimg.cn/20200521061022685.png" width="80%"></p>
 <p>构建决策树的关键其实也就是在寻找特征值和分割阈值，即何时选择x1进行决策，以及$\theta$值的确认。</p>
 <h1 id="决策树构建"><a href="#决策树构建" class="headerlink" title="决策树构建"></a>决策树构建</h1><p>构建决策树时候需要尽可能使得构建出的树越小越好，首先引入熵和信息增益的概念。</p>
 <h2 id="熵"><a href="#熵" class="headerlink" title="熵"></a>熵</h2><p>熵这个概念应该最早是学化学的时候接触到的，用来表示目标的混乱程度。<br>用公式表示就是：</p>
@@ -198,7 +198,7 @@ Wind: S(trong), W(eak)
 
 所以按照刚刚讲述的步骤，首先计算打不打球的熵：
 $$play = 9/14$$$$not = 5/14$$$$H(Play?) = −(9/14) /log_2(9/14)−(5/14) /log_2(5/14)=0.94</script><p>接着计算每个天气特征的熵，这里展示了一下outlook的计算熵过程：</p>
-<p><img src="https://img-blog.csdnimg.cn/20200521064645645.png"  width="50%"></p>
+<p><img src="https://img-blog.csdnimg.cn/20200521064645645.png" width="50%"></p>
 <p>Outlook: 0.246<br>Humidity: 0.151<br>Wind: 0.048<br>Temperature: 0.029<br>当计算完所有的天气特征熵并得到信息增益之后，就可以由大到小构建决策树了。<br>最终构建出的决策树如图所示：</p>
 <p><img src="https://img-blog.csdnimg.cn/20200521065045762.png" width="70%"></p>
 <h2 id="信息增益率"><a href="#信息增益率" class="headerlink" title="信息增益率"></a>信息增益率</h2><p>对于某些特征来说，自身的熵很小可能是因为自身发生的概率很小，这样会导致它的信息增益很大，影响决策树的构建，所以可以引入信息增益率来解决这个事情。<br>用信息增益除以本身的因素熵。</p>
